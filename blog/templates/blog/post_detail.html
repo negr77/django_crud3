@@ -1,0 +1,14 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<h1>{{post.title }}</h1>
+{% if post.photo %}
+    <p><img src='{{ post.photo.url }}' alt='Post Image'></p>
+{% endif %}
+<p>{{ post.text|linebreaksbr }}</p>
+<div class="date"></div>
+    <p>оПУБЛИКОВАНО: <b>{{post.created_date }}</b></p>
+</div>
+<p align="center"><a class="btn btn-warning" href="{% url 'post-edit' pk=post.pk %}"
+    Редактировать
+{% endblock %} 

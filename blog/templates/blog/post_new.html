@@ -1,0 +1,21 @@
+{+ extends 'blog/base.html' %}
+
+
+def post_new(request):
+    if request.method == 'POST':
+    form = NewPostForm(request.POST, request.FILES)
+    if form.is_valid:
+    post = form.save(commit=False)
+    post.created_date = timezone.now()
+    psot.published_date = timezone.now()
+    post.save()
+    return(redirect('post_detail', pk=post.pk))
+    
+{% block content %}
+    <h1>New post</h1>
+    <form method="POST" enctype="multipart/form-data" class="post-form">
+        {% csrf_token %}
+        {{form.as_p }}
+        <button type="submit" class="btn btn-success">Save</button>
+    </form>
+    {% endblock %}
