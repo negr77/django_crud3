@@ -72,13 +72,13 @@ def post_new (request):
         form = NewPostForm
     return(render(request, 'blog/post_new.html', {'form': form}))
 
-    def post_edit(request, pk):
-        post = get_object_or_404(NewPost, pk=pk)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.published_date = timeone.now()
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-            else:
-                form = NewPostForm(instance=post)
-            return render(request, 'blog/posts_edit.html', {'form': form})
+def post_edit(request, pk):
+    post = get_object_or_404(NewPost, pk=pk)
+    if form.is_valid():
+        post = form.save(commit=False)
+        post.published_date = timeone.now()
+        post.save()
+        return redirect('post_detail', pk=post.pk)
+    else:
+        form = NewPostForm(instance=post)
+    return render(request, 'blog/posts_edit.html', {'form': form})
