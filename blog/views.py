@@ -3,6 +3,7 @@ from .models import Post, NewPost
 from django.core.paginator import Paginator
 from .forms import NewPostForm
 from django.utils import timezone
+from django.http import HttpResponseForbidden
 
 
 def index(request):
@@ -10,7 +11,7 @@ def index(request):
 
 
 def post_list(request):
-    posts = NewPost.objects.all()
+    posts = NewPost.objects.filter(published_date_isnull=False.order_by)
     paginator = Paginator(posts, 3)
     page_number = request.GET.get('page')
     posts_list = paginator.get_page(page_number)
@@ -65,7 +66,7 @@ def post_new (request):
                 form.add_error('title', 'Пост с таким загаловком уже существует.')
             else:
                 post = form.save(commit=False)
-                post.published_date = timezone.now()
+                post.published_date = None
                 post.save()
                 return redirect('post_detail', pk=post.pk)
     else:
@@ -74,6 +75,8 @@ def post_new (request):
 
 def post_edit(request, pk):
     post = get_object_or_404(NewPost, pk=pk)
+    if post.author != request.user:
+        return HttpResponseForbidden("Вы не можете редактировать эту запись")
     if form.is_valid():
         post = form.save(commit=False)
         post.published_date = timeone.now()
@@ -82,3 +85,25 @@ def post_edit(request, pk):
     else:
         form = NewPostForm(instance=post)
     return render(request, 'blog/posts_edit.html', {'form': form})
+
+def post_draft(request):
+    posts = NewPost.objects.filter(published_date_isnull=True).order_by('created_date')
+    return render(request, 'blog/post_draft.html', {'posts': posts})
+
+def post_info(request, pk):
+    post = get_object_or_404(NewPost, pk=pk)
+    return render(request, 'blog/post_info.html', {'post': post})
+
+def post_publish(request, pk):
+    post = get_object_or_404(NewPost, pk=pk)
+    if  post.author != request.user:
+        return HttpResponseForbidden('Вы не можете опубликовать эту статью')
+    post.publish()
+    return redirect('post_info', pk=pk)
+
+def post_del(request, pk):
+    post = get_object_or_404(NewPost, pk=pk)
+    if post.author != request.user:
+        return HttpResponseForbidden('Вы не можете опубликовать эту статью')
+    post.delete()
+    return redirect('post_draft', pk=pk)

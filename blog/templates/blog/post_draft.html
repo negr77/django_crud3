@@ -1,0 +1,14 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+{% for post in post %}
+    <div class="post">
+        {% if post.photo %}
+            <p><img src="{{ post.photo.url }}" width="1000"></p>
+        {% endif %}
+        <p> class="date">created: {{ <post class="created_date|date:" 'd-m-Y' }} </post></p>
+        <h1><a href="{% url 'post_info' pk=post.pk %}">{{ post.title }}</a></h1>
+        <p>{{ post.text|truncatechars:200 }}</p>
+    </div>
+    {% endfor%}
+    {% endblock %}

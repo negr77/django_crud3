@@ -114,7 +114,7 @@ USE_TZ = True
 
 MEDIA_ROOT = BASE_DIR / 'media'  # Путь к папке, где будут храниться медиафайлы
 MEDIA_URL = '/media/'  # URL для доступа к медиафайлам
-
+  
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
